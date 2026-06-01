@@ -29,37 +29,42 @@ for (const [y, d] of Object.entries(data10sen)) {
     const roxyUrl = new URL("https://roxy.otodb.net/json");
     roxyUrl.searchParams.set("q", url);
 
-    const roxyData = v.safeParse(
-      v.object({
-        status: v.literal("ok"),
-        payload: v.object({
-          title: v.string(),
-          url: v.string(),
-          thumbnail: v.string(),
+    try {
+      const roxyData = v.safeParse(
+        v.object({
+          status: v.literal("ok"),
+          payload: v.object({
+            title: v.string(),
+            url: v.string(),
+            thumbnail: v.string(),
+          }),
         }),
-      }),
-      await ky
-        .get(roxyUrl, {
-          retry: { limit: 3, methods: ["get"] },
-          timeout: 15000,
-          throwHttpErrors: false,
-        })
-        .json(),
-    );
+        await ky
+          .get(roxyUrl, {
+            retry: { limit: 3, methods: ["get"] },
+            timeout: 20000,
+            throwHttpErrors: false,
+          })
+          .json(),
+      );
 
-    if (!roxyData.success) {
+      if (!roxyData.success) {
+        resolved.push({ year: y, count, title, url, thumbnail: null });
+        continue;
+      }
+
+      resolved.push({
+        year: y,
+        count,
+        url,
+        title: roxyData.output.payload.title,
+        thumbnail: roxyData.output.payload.thumbnail,
+      });
+      console.log(`resolved: ${url}`);
+    } catch (e) {
+      console.error(e);
       resolved.push({ year: y, count, title, url, thumbnail: null });
-      continue;
     }
-
-    resolved.push({
-      year: y,
-      count,
-      url,
-      title: roxyData.output.payload.title,
-      thumbnail: roxyData.output.payload.thumbnail,
-    });
-    console.log(`resolved: ${url}`);
   }
 }
 
