@@ -16,9 +16,9 @@ const ten: ComponentProps<typeof TopSlides>[] = await Promise.all(
         href: `/10sen/${year}`,
         title: `音MAD作者が選ぶ${year}年の音MAD10選`,
         c: await Promise.all(
-          values.slice(0, 8).map(async ({ title, url, type }) => ({
+          values.slice(0, 8).map(async ({ title, url }) => ({
             title,
-            thumbnail: await getThumbnail(type, url),
+            thumbnail: await getThumbnail(url),
           })),
         ),
       };
@@ -33,9 +33,9 @@ const miru10: ComponentProps<typeof TopSlides>[] = await Promise.all(
         href: `/miru10/${year}`,
         title: `見る専も選ぶ${year}年の音MAD10選`,
         c: await Promise.all(
-          values.slice(0, 8).map(async ({ title, url, type }) => ({
+          values.slice(0, 8).map(async ({ title, url }) => ({
             title,
-            thumbnail: await getThumbnail(type, url),
+            thumbnail: await getThumbnail(url),
           })),
         ),
       };

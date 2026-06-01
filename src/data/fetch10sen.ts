@@ -4,7 +4,7 @@ export default function fetch10sen(): Promise<
     { count: number; url: string | null; title: string; type: string }[]
   >
 > {
-  return fetch("https://otomadb.github.io/10sen-extract/data.json").then((b) =>
+  return fetch("https://otodb.github.io/10sen-extract/data.json").then((b) =>
     b.json(),
   );
 }

@@ -1,65 +1,28 @@
-import ky from "ky";
-import pseudoThumbnail from "../images/pseudo_thumbnail.jpg";
 import * as v from "valibot";
+import pseudoThumbnail from "../images/pseudo_thumbnail.jpg";
 
-export default async function (type: string, url: string | null) {
+export default async function (url: string | null) {
   if (!url) return pseudoThumbnail;
 
-  switch (type) {
-    case "nicovideo": {
-      const sourceId = /(nm|sm)\d+/.exec(url)?.[0];
+  const roxyUrl = new URL("https://roxy.otodb.net/json");
+  roxyUrl.searchParams.set("q", url);
 
-      if (!sourceId) {
-        return pseudoThumbnail;
-      }
+  try {
+    const roxyRes = await fetch(roxyUrl);
+    if (roxyRes.status !== 200) return pseudoThumbnail;
+    const roxyData = v.safeParse(
+      v.object({
+        title: v.string(),
+        url: v.string(),
+        thumbnail: v.string(),
+      }),
+      await roxyRes.json(),
+    );
 
-      const res = await ky.get(
-        new URL(
-          `/video/${sourceId}`,
-          " https://nicovideo-api-proxy.otomadb.com",
-        ),
-        {
-          retry: 3,
-          throwHttpErrors: false,
-        },
-      );
-      if (!res.ok) {
-        try {
-          const a = await res.json().then((re) =>
-            v.parse(
-              v.object({
-                reason: v.union([
-                  v.literal("FETCH_FAILED"),
-                  v.literal("INVALID_RESPONSE"),
-                ]),
-                data: v.unknown(),
-              }),
-              re,
-            ),
-          );
-          switch (a.reason) {
-            case "FETCH_FAILED":
-              return pseudoThumbnail;
-            case "INVALID_RESPONSE":
-              console.error(a.data);
-              return pseudoThumbnail;
-          }
-        } catch (e) {
-          console.error(e);
-          return pseudoThumbnail;
-        }
-      }
-
-      const a = await res.json();
-      const b = v.safeParse(v.object({ thumbnailUrl: v.string() }), a);
-      if (!b.success) {
-        console.error(b.issues);
-        return pseudoThumbnail;
-      }
-
-      return b.output.thumbnailUrl;
-    }
-    default:
-      return pseudoThumbnail;
+    if (!roxyData.success) return pseudoThumbnail;
+    return roxyData.output.thumbnail;
+  } catch (e) {
+    console.error(e);
+    return pseudoThumbnail;
   }
 }

@@ -7,9 +7,9 @@ interface Props {
   type: string;
 }
 
-const { title, type, url } = Astro.props;
+const { title, url } = Astro.props;
 
-const thumbnail = await getThumbnail(type, url);
+const thumbnail = await getThumbnail(url);
 const furl = url ? new URL(url) : "#";
 ---
 
