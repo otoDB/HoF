@@ -6,14 +6,13 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "prebuild": "npm run generate:10sen",
-    "generate:10sen": "node --experimental-strip-types generate_10sen.ts",
+    "prebuild": "bun run generate:10sen",
+    "generate:10sen": "bun run generate_10sen.ts",
     "preview": "wrangler pages dev ./dist",
     "typecheck": "tsc --noEmit",
     "check": "biome check .",
     "fmt": "biome check --write ."
   },
-  "packageManager": "npm@10.9.2",
   "dependencies": {
     "@astrojs/svelte": "^7.0.0",
     "@astrojs/tailwind": "^5.1.0",
@@ -28,7 +27,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "typescript": "^5.0.0",
-    "wrangler": "^3.0.0"
+    "typescript": "^5.0.0"
   }
 }

@@ -1,4 +1,3 @@
-import { writeFile } from "node:fs/promises";
 import ky from "ky";
 import * as v from "valibot";
 
@@ -68,7 +67,7 @@ for (const [y, d] of Object.entries(data10sen).slice(0, 1)) {
   }
 }
 
-await writeFile(
+await Bun.write(
   OUTPUT_PATH,
   JSON.stringify(Object.groupBy(resolved, (r) => r.year)),
 );
