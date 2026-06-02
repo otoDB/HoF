@@ -18,7 +18,7 @@ const resolved: {
   thumbnail: string | null;
 }[] = [];
 
-for (const [y, d] of Object.entries(data10sen)) {
+for (const [y, d] of Object.entries(data10sen).slice(0, 1)) {
   console.log(`resolving: ${y} (${d.length} items)`);
   for (const { count, title, url } of d) {
     if (!url) {
